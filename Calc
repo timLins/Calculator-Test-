@@ -1,0 +1,169 @@
+import java.io.IOException;
+import java.util.Scanner;
+class OtricatelnoeRomeException extends Exception{
+    public int number;
+    public OtricatelnoeRomeException(String messange, int number){
+        super(messange);
+        this.number = number;
+    }
+}
+public class CalculatorTest {
+    public static void main(String[] args) {
+        System.out.println("Калькулятор");
+        System.out.println("Введите арифметическое выражение римских или  целых арабских чисел. Каждое число не больше 10, римские не меньше 1.");
+        System.out.println("Результатом работы калькулятора с арабскими числами могут быть отрицательные числа и ноль. Результатом работы калькулятора с римскими числами могут быть только положительные числа");
+        Scanner scanner = new Scanner(System.in);
+        String s = scanner.nextLine().replaceAll("\\s+","");
+
+        try {
+            System.out.println(calc(s));
+        }
+           catch (NumberFormatException e ){
+            System.out.println("формат математической операции не удовлетворяет заданию - два операнда и один оператор");}
+            catch (NullPointerException g){
+                System.out.println("Строка не является математической операцией");
+            }
+        catch (RaznieSystemException h){
+            System.out.println("Использованы разные системы счисления");
+        }
+
+    }
+
+
+    public static String calc(String s) throws RaznieSystemException {
+            int x = 0, y = 0, x1 = 0, y1 = 0;
+            int result = 0;
+
+            String l = null, r = null, toRome = null;
+            String[] arrayToArabic = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
+            String[] arrayToRome = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+                    "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX",
+                    "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX",
+                    "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI", "XXXVII", "XXXVIII", "XXXIX", "XL",
+                    "XLI", "XLII", "XLIII", "XLIV", "XLV", "XLVI", "XLVII", "XLVIII", "XLIX", "L",
+                    "LI", "LII", "LIII", "LIV", "LV", "LVI", "LVII", "LVIII", "LIX", "LX",
+                    "LXI", "LXII", "LXIII", "LXIV", "LXV", "LXVI", "LXVII", "LXVIII", "LXIX", "LXX",
+                    "LXXI", "LXXII", "LXXIII", "LXXIV", "LXXV", "LXXVI", "LXXVII", "LXXVIII", "LXXIX", "LXXX",
+                    "LXXXI", "LXXXII", "LXXXIII", "LXXXIV", "LXXXV", "LXXXVI", "LXXXVII", "LXXXVIII", "LXXXIX", "XC",
+                    "XCI", "XCII", "XCIII", "XCIV", "XCV", "XCVI", "XCVII", "XCVIII", "XCIX", "C"};
+
+            //отрежем левую часть и приравняем ее к инту
+
+        try {
+            for (int i = 0; i < s.length(); i++) {
+                char c;
+                c = s.charAt(i);
+
+                if (c == '+' || c == '-' || c == '*' || c == '/') {
+                    l = s.substring(0, i);
+                    r = s.substring(i + 1);
+                    break;
+                }
+        }
+        }
+        catch (NullPointerException e){
+            System.out.println("Строка не является математической операцией");
+        }
+                // если римская цифра, то мы ее сравним с массивом римских цифр и переведем в арабскую
+                // а если  не римская, то просто переведем строку в арабскую цифру
+
+            for (int i = 0; i < arrayToArabic.length; i++) {
+                if (l.equals(arrayToRome[i])) {
+                    x = i + 1;
+                    break;
+                }
+            }
+            if (x == 0) {
+                x1 = Integer.parseInt(l);
+            }
+            for (int i = 0; i < arrayToArabic.length; i++) {
+                if (r.equals(arrayToRome[i])) {
+                    y = i + 1;
+                    break;
+            }
+            } if (y == 0) {
+                y1 = Integer.parseInt(r);
+            }
+
+            // Расчеты
+        try {
+            if (x != 0 && y != 0) {
+                for (int i = 0; i < s.length(); i++) {
+                    char c;
+                    c = s.charAt(i);
+                    if (c == '+') {
+                        result = x + y;
+                        break;
+
+                    } else if (c == '-') {
+                        result = x - y;
+
+                    } else if (c == '*') {
+                        result = x * y;
+
+                    } else if (c == '/') {
+                        result = x / y;
+
+                    }
+                }
+
+                if (result > 0) {
+                    for (int i = 0; i < arrayToRome.length; i++) {
+                        if (result == i + 1) {
+                            toRome = arrayToRome[i];
+                            return toRome;
+                        }
+                    }
+                }
+                else if (result<0) try {
+                    throw new OtricatelnoeRomeException("Результат меньше нуля", result);
+                } catch (OtricatelnoeRomeException e) {
+                    throw new RuntimeException(e);
+                }
+
+            } else if (x == 0 && y == 0 && x1 < 11 && y1 < 11) {
+                char c;
+                for (int i = 0; i < s.length(); i++) {
+                    c = s.charAt(i);
+                    if (c == '+') {
+                        result = x1 + y1;
+                        break;
+                    } else if (c == '-') {
+                        result = x1 - y1;
+                        break;
+                    } else if (c == '*') {
+                        result = x1 * y1;
+                        break;
+                    } else if (c == '/') {
+                        result = x1 / y1;
+                        break;
+                    }
+
+                }
+            }
+            else if ((x == 0 && y != 0) || (x != 0 && y == 0)) {
+                 throw   new NullPointerException();
+            } else {
+                throw new  IOException();
+            }
+            s = ""+result;
+        }
+       /* catch (RaznieSystemException h){
+            System.out.println("Использованы разные системы счисления");
+        }*/
+        catch (NumberFormatException e ){
+            System.out.println("формат математической операции не удовлетворяет заданию - два операнда и один оператор");}
+        catch (IOException z ){
+            System.out.println("Неверно введено арифметическое выражение");
+
+        }
+        return s;
+
+    }
+}
+class RaznieSystemException extends Exception{
+    public void Mes (){
+        System.out.println("Разные системы счисления");
+    }
+
+}
